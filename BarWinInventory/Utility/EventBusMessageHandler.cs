@@ -96,7 +96,7 @@ namespace BarWinInventory.Utility
                     }
                     break;
             }
-            serialControl.WriteLog(scannerMessage.Barcode + " : " + scannerMessage.ScannerResult.ToString());
+            serialControl.WriteLog("Received eventbus response for barcode :"+scannerMessage.Barcode + " Response: " + scannerMessage.ScannerResult.ToString());
 
             Thread.Sleep(4000);
             // clear leds after 4 seconds.

@@ -49,18 +49,29 @@ namespace BarWinInventory.Hubs
                 s[2] = (char)0;
                 s[3] = (char)255;
                 s[4] = '\r';
-
+                serialControl.WriteLog("Received barcode scan: " + value);
                 serialControl.SendSerial(s);
                 eventBusService.Publish("scanner", JsonConvert.SerializeObject(msg));
-                
+                serialControl.WriteLog("Send to event bus barcode: " + value);
             }
 
         }
 
-        public async Task SendMessage(string user, string message)
+        public async Task StartScan()
         {
-            serialControl.WriteLog(user + " : " + message);
-            await Clients.All.SendAsync("ReceiveMessage", user, message);
+            char[] bs = new char[2];
+            char[] s = new char[5];
+            s[0] = 'c';
+            s[1] = (char)0;
+            s[2] = (char)0;
+            s[3] = (char)0;
+            s[4] = '\r';
+            bs[0] = 's';
+            bs[1] = '\r';
+
+            serialControl.SendSerial(s);
+            serialControl.SendSerial(bs);
+            serialControl.WriteLog("Start barcode scanner instruction");
         }
 
         public override Task OnConnectedAsync()

@@ -17,6 +17,8 @@ namespace BarWinInventory.Utility
         private string buffer = "";
         public delegate void EventReceiveCommand(SerialControl serialControl);
         public EventReceiveCommand OnReceiveCommand { get; set; }
+
+        private readonly IHubContext<SerialHub> hubContext;
         public string RetrieveBuffer()
         {
             string value = (string)buffer.Clone();
@@ -26,8 +28,9 @@ namespace BarWinInventory.Utility
         }
 
 
-        public SerialControl()
+        public SerialControl(IHubContext<SerialHub> hubContext)
         {
+            this.hubContext = hubContext;
             log = new List<string>();
             serialPort = new SerialPort();
             string[] ports = SerialPort.GetPortNames();
@@ -37,6 +40,7 @@ namespace BarWinInventory.Utility
             serialPort.DataReceived += OnRead;
             serialPort.Open();
 
+            log.Add("connected to COM port " + serialPort.PortName);
         }
         ~SerialControl()
         {
@@ -51,7 +55,7 @@ namespace BarWinInventory.Utility
                 char received = (char)serialPort.ReadChar();
                 if(received == '\r')
                 {
-                    log.Add(buffer);
+                    //log.Add(buffer);
                     OnReceiveCommand.Invoke(this);
                 }
                 else
@@ -69,7 +73,7 @@ namespace BarWinInventory.Utility
 
         public void WriteLog(string text)
         {
-            //hubContext.Clients.All.SendAsync("ReceiveLog", buffer);
+            hubContext.Clients.All.SendAsync("ReceiveLog", text);
             log.Add(text);
         }
 
