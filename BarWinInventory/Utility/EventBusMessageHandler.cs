@@ -96,7 +96,9 @@ namespace BarWinInventory.Utility
                     }
                     break;
             }
-            serialControl.WriteLog("Received eventbus response for barcode :"+scannerMessage.Barcode + " Response: " + scannerMessage.ScannerResult.ToString());
+            serialControl.WriteLog("Received eventbus response for barcode :" + scannerMessage.Barcode + " Response: "
+                + scannerMessage.ScannerResult.ToString() + " Product Name: " + scannerMessage.ProductName +
+                " Products in stock:" + scannerMessage.ProductStock + " Price: € "+scannerMessage.ProductPrice);
 
             Thread.Sleep(4000);
             // clear leds after 4 seconds.
@@ -105,6 +107,7 @@ namespace BarWinInventory.Utility
             s[2] = (char)0;
             s[3] = (char)0;
             s[4] = '\r';
+
             serialControl.SendSerial(s);
         }
     }
